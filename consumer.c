@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SIZE 2		// # of items in table, 2 by default
-#define SHM_KEY 0x1234	// Shared memory key, 0x1234 by default
-#define ITERATIONS 10	// # of times processes will attempt critical section
+#define SIZE 2		
+#define SHM_KEY 0x1234	
+#define ITERATIONS 10	
 
 struct shmbuf {
 	sem_t mutex;	// Semaphore for mutual exclusion
@@ -44,27 +44,27 @@ void* consumer_thread(void* arg) {
 	for (int it = 0; it < ITERATIONS; it++) {
 	
 		sleep(1);
-		sem_wait(&shmptr->mutex);			// Calling wait on "mutex" to ensure mutual exclusion
-		printf("Consumer entered...\n");		// Entered critical section
+		sem_wait(&shmptr->mutex);			
+		printf("Consumer entered...\n");		
 		
-		int i, j = 1;					// i = empty's value, j = table index
+		int i, j = 1;					
 		sem_getvalue(&shmptr->empty, &i);
-		while (i < SIZE) {			// while i < size of table...
+		while (i < SIZE) {			
 			
 			int x;
-			x = shmptr->table[j];		// x = integer from table[j]
-			sem_post(&shmptr->empty);	// declare that an item has been taken from the table
+			x = shmptr->table[j];		
+			sem_post(&shmptr->empty);	
 			printf("Consumed item %d\n", j);	
-			printf("Item %d consumed = ", j);	// output what it got to check with producer output
+			printf("Item %d consumed = ", j);
 			printf("%d\n", x);
 			++j;
-			sem_getvalue(&shmptr->empty, &i);	// check i again to re-evaluate while loop
+			sem_getvalue(&shmptr->empty, &i);	
 			
 		}
 
 		printf("Consumer done consuming items since the table is empty.\n");
 
-		sem_post(&shmptr->mutex);	// no longer in critical section, so post "mutex"
+		sem_post(&shmptr->mutex);	
 	}
 	
 	printf("Consumer thread has finished working.\n");

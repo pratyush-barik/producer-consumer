@@ -13,9 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SIZE 2		// # of items in table, 2 by default
-#define SHM_KEY 0x1234	// Shared memory key, 0x1234 by default
-#define ITERATIONS 10	// # of times processes will attempt critical section
+#define SIZE 2		
+#define SHM_KEY 0x1234	
+#define ITERATIONS 10	
 
 struct shmbuf {
 	sem_t mutex;	// Semaphore for mutual exclusion
@@ -45,16 +45,16 @@ void* producer_thread(void* arg) {
 	for (int it = 0; it < ITERATIONS; it++) {
 	
 		sleep(1);
-		sem_wait(&shmptr->mutex);			// Calling wait on "mutex" to ensure mutual exclusion
-		printf("Producer entered...\n");		// Entered critical section
+		sem_wait(&shmptr->mutex);			
+		printf("Producer entered...\n");		
 		
-		int i, j = 1;					// i = empty's value, j = table index
+		int i, j = 1;				
 		sem_getvalue(&shmptr->empty, &i);
-		while (i > 0) {				// while i > 0 (while table is not empty)...
+		while (i > 0) {				
 		
-			int x = rand();			// make x a random integer
-			shmptr->table[j] = x;		// table[j] = random integer(x)
-			sem_wait(&shmptr->empty);	// declare that an item has been put into the table
+			int x = rand();		
+			shmptr->table[j] = x;		
+			sem_wait(&shmptr->empty);	
 			printf("Produced item %d\n", j);
 			printf("Item %d produced = ", j);	// output what it put in to check with consumer output
 			printf("%d\n", x);
@@ -65,7 +65,7 @@ void* producer_thread(void* arg) {
 		
 		printf("Producer done producing items since the table is full.\n");
 		
-		sem_post(&shmptr->mutex);	// no longer in critical section, so post "mutex"
+		sem_post(&shmptr->mutex);	
 	
 	}
 	
